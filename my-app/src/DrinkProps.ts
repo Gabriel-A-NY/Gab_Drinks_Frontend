@@ -1,9 +1,9 @@
 export interface DrinkProps {
-    drinkId: number;
-    drinkName: string;
+    product_id: number;
     price: number;
     description: string;
-    imageUrl: string;
+    image_link: string;
+    product_name: string;
 }
 
 export interface Drinks {
