@@ -1,20 +1,33 @@
 import {defaultAxiosInstance} from "./DataFetch.ts";
 
-type DrinkParam = {
-    drinkId: number,
-    drinkName: string,
+export type DrinkParam = {
+    id: number,
+    product_name: string,
     price: number,
     description: string,
-    imageUrl: string,
+    image_link: string
 }
+
+const getAuthorizationToken = () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        throw new Error("No token found");
+    }
+
+    return {
+        headers: {
+            Authorization: token,
+        },
+    };
+};
 
 
 const getDrinks = async () => {
     try {
         const response = await defaultAxiosInstance.get(
-            "all"
+            "/all"
         )
-        console.log(response)
+        console.log(response.data)
         return response.data;
     } catch (error) {
         console.log(error)
@@ -32,7 +45,7 @@ const getDrinksById = async (id: number) => {
 
 const deleteDrink = async (id: number) => {
     try {
-        const response = await defaultAxiosInstance.delete(`${id}`)
+        const response = await defaultAxiosInstance.delete(`${id}`, getAuthorizationToken())
         return response.data;
     } catch (error) {
         console.log(error)
@@ -44,7 +57,7 @@ async function createDrink(DrinkParam: DrinkParam) {
         const data = {
             DrinkParam: DrinkParam
         }
-        const response = await defaultAxiosInstance.post(`add`, data)
+        const response = await defaultAxiosInstance.post("add", data, getAuthorizationToken())
         return response.data
     } catch (error) {
         alert(error)
@@ -57,12 +70,13 @@ async function updateDrink(DrinkParam: DrinkParam) {
             DrinkParam: DrinkParam
         }
 
-        const response = await defaultAxiosInstance.patch(`${DrinkParam.drinkId}`, data)
+        const response = await defaultAxiosInstance.patch(`${DrinkParam.id}`, data, getAuthorizationToken())
         return response.data
     } catch (error) {
         console.log(error)
     }
 }
+
 
 const DrinkService = {
     getDrinks,
@@ -72,4 +86,4 @@ const DrinkService = {
     updateDrink,
 }
 
-export default DrinkService
+export default DrinkService;
